@@ -12,6 +12,8 @@ model User {
   email         String          @unique
   password      String
   name          String
+  passwordResetOTP   String?
+  passwordResetExpires   DateTime?
   createdAt     DateTime        @default(now())
   comments      Comment[]
   loginActivity LoginActivity[]

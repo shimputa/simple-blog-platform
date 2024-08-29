@@ -5,58 +5,6 @@ import { z } from 'zod';
 import { userSchema, userIdSchema } from '../../schemas/user.schema';
 const prisma = new PrismaClient();
 
-// Create a new user
-// export const createUser = async (req: FastifyRequest, reply: FastifyReply) => {
-//   try {
-//     const parsedData = userSchema.parse(req.body);
-
-//     // Check if user with the same email already exists
-//     const existingUser = await prisma.user.findUnique({
-//       where: { email: parsedData.email },
-//     });
-
-//     if (existingUser) {
-//       reply.code(409).send({
-//         statusCode: 409,
-//         error: 'Conflict',
-//         message: 'User with this email already exists',
-//       });
-//       return;
-//     }
-
-//     // Create the new user
-//     const user = await prisma.user.create({
-//       data: parsedData,
-//     });
-//     reply.code(201).send(user);
-//   } catch (error) {
-//     if (error instanceof z.ZodError) {
-//       console.error('Validation Error:', error.errors);
-//       reply.code(400).send({
-//         statusCode: 400,
-//         error: 'Bad Request',
-//         message: 'Invalid input data',
-//         details: error.errors,
-//       });
-//     } else if (error instanceof Error) {
-//       console.error('Prisma Error:', error.message);
-//       reply.code(500).send({
-//         statusCode: 500,
-//         error: 'Internal Server Error',
-//         message: 'Failed to create user due to server error',
-//       });
-//     } else {
-//       console.error('Unknown Error:', error);
-//       reply.code(500).send({
-//         statusCode: 500,
-//         error: 'Internal Server Error',
-//         message: 'An unknown error occurred',
-//       });
-//     }
-//   }
-// };
-
-// Get a specific user by ID
 export const getUser = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
     const { id } = userIdSchema.parse(req.params);
