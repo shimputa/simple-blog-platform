@@ -1,15 +1,18 @@
 import Fastify from 'fastify';
+import dotenv from 'dotenv';
 import userRoutes from './routes/user/user.route';
 import postRoutes from './routes/post/post.route';
 import commentRoutes from './routes/comment/comment.route';
 import authrRoutes from './routes/auth/auth.route';
 import fastifyJwt from '@fastify/jwt';
-// const fastifyJwt = require('@fastify/jwt');
+// Load environment variables
+dotenv.config();
 
 const app = Fastify({ logger: true });
 
 // Register the fastify-jwt plugin with your secret key
-app.register(fastifyJwt, { secret: 'your_jwt_secret' });
+app.register(fastifyJwt, { secret:'your_jwt_secret'});
+// app.register(fastifyJwt, { secret:process.env.JWT_SECRET});
 
 app.register(authrRoutes, { prefix: '/auth' });
 app.register(userRoutes, { prefix: '/users' });
@@ -28,8 +31,3 @@ const start = async ()=>{
 };
 
 start();
-
-// Register the fastify-jwt plugin
-// app.register(fastifyJwt, {
-//     secret: 'your-secret-key'  // Use a strong secret key here
-//   });
