@@ -8,7 +8,16 @@ const prisma = new PrismaClient();
 export const getUser = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
     const { id } = userIdSchema.parse(req.params);
-    const user = await prisma.user.findUnique({ where: { id: parseInt(id) } });
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+
     if (user) {
       reply.send(user);
     } else {
@@ -118,8 +127,24 @@ export const deleteUser = async (req: FastifyRequest, reply: FastifyReply) => {
 // Get all users
 export const getAllUsers = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
-    const users = await prisma.user.findMany();
-    reply.send(users);
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+
+    if (users.length === 0) {
+      reply.code(404).send({
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'No users found.',
+      });
+    } else {
+      reply.send(users);
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error('Prisma Error:', error.message);
@@ -157,20 +182,62 @@ export const getRecentlyLoggedInUsers = async (req: FastifyRequest, reply: Fasti
       },
     });
 
-      const users = recentLogins.map((login: { user: { id: any; email: any; name: any; }; loginTime: any; }) => ({
-          id: login.user.id,
-          email: login.user.email,
-          name: login.user.name,
-          loginTime: login.loginTime,
-      }));
-
-      return reply.send({ users });
-  } catch (error) {
-      return reply.code(500).send({
-          statusCode: 500,
-          error: 'Internal Server Error',
-          message: 'Failed to fetch recently logged-in users',
+    if (recentLogins.length === 0) {
+      return reply.code(404).send({
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'No recently logged-in users found.',
       });
+    }
+
+    const users = recentLogins.map((login) => ({
+      id: login.user.id,
+      email: login.user.email,
+      name: login.user.name,
+      loginTime: login.loginTime,
+    }));
+
+    return reply.send({ users });
+  } catch (error) {
+    console.error('Error fetching recently logged-in users:', error);
+    return reply.code(500).send({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      message: 'Failed to fetch recently logged-in users',
+    });
   }
 };
+
+// export const getRecentlyLoggedInUsers = async (req: FastifyRequest, reply: FastifyReply) => {
+//   try {
+//     const recentLogins = await prisma.loginActivity.findMany({
+//       where: {
+//         loginTime: {
+//           gte: new Date(new Date().setDate(new Date().getDate() - 1)), // Last 24 hours
+//         },
+//       },
+//       include: {
+//         user: true,
+//       },
+//       orderBy: {
+//         loginTime: 'desc',
+//       },
+//     });
+
+//       const users = recentLogins.map((login: { user: { id: any; email: any; name: any; }; loginTime: any; }) => ({
+//           id: login.user.id,
+//           email: login.user.email,
+//           name: login.user.name,
+//           loginTime: login.loginTime,
+//       }));
+
+//       return reply.send({ users });
+//   } catch (error) {
+//       return reply.code(500).send({
+//           statusCode: 500,
+//           error: 'Internal Server Error',
+//           message: 'Failed to fetch recently logged-in users',
+//       });
+//   }
+// };
 

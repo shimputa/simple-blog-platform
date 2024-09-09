@@ -14,7 +14,7 @@ export const sendOTP = async (email: string, otp: string) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: 'Password Reset OTP',
-    text: `Your OTP for password reset is: ${otp}\n\nThis OTP will expire in 10 minutes.\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    text: `Your OTP for password reset is: ${otp}\n\nThis OTP will expire in 1 minutes.\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`,
   };
 
   try {
