@@ -79,8 +79,8 @@ export const loginUser = async (req: FastifyRequest, reply: FastifyReply) => {
       },
     });
 
-    // Create a JWT token using reply.jwtSign
-    const token = await reply.jwtSign({ userId: user.id });
+    // Create a JWT token with expiration of 1 month
+    const token = await reply.jwtSign({ userId: user.id }, { expiresIn: '30d' });
 
     return reply.send({
       accessToken: token,
@@ -124,7 +124,7 @@ export const requestPasswordReset = async (req: FastifyRequest, reply: FastifyRe
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const otpExpires = new Date(Date.now() + 1 * 60 * 1000); // 1 minutes
 
     await prisma.user.update({
       where: { id: user.id },

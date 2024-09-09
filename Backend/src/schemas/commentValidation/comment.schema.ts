@@ -1,4 +1,4 @@
-// src/schemas/comment.schema.ts
+
 import { z } from 'zod';
 
 // Schema for validating the comment ID parameter

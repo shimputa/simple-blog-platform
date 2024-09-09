@@ -5,13 +5,13 @@ import postRoutes from './routes/post/post.route';
 import commentRoutes from './routes/comment/comment.route';
 import authrRoutes from './routes/auth/auth.route';
 import fastifyJwt from '@fastify/jwt';
-// Load environment variables
+
 dotenv.config();
 
 const app = Fastify({ logger: true });
 
-// Register the fastify-jwt plugin with your secret key
 app.register(fastifyJwt, { secret:'your_jwt_secret'});
+
 // app.register(fastifyJwt, { secret:process.env.JWT_SECRET});
 
 app.register(authrRoutes, { prefix: '/auth' });
